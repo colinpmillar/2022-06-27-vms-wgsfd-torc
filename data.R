@@ -7,3 +7,8 @@ library(icesTAF)
 
 mkdir("data")
 
+logbook <- read.taf(taf.data.path("logbook_static_gears", "logbook_static.csv"))
+
+head(logbook)
+
+
