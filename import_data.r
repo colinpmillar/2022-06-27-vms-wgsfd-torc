@@ -112,23 +112,18 @@ df1 <- df_gear_grups_noNA %>%
     ) 
 
 # calculate percentages of fishing days with vms 
-df1$perc_fish_days <- round(((df1$fishing_days_vmsYes - df1$fishing_days_vmsNO) / df1$fishing_days_vmsYes * 100), 0) # need to finish this
-index_neg <- which(df1$perc_fish_days < 0)
-df1$perc_fish_days[index_neg] <- NaN
-df1$perc_fish_days[index_neg] <- round(((df1$fishing_days_vmsYes[index_neg] / df1$fishing_days_vmsNO[index_neg]) * 100), 0)
+df1$perc_fish_days <-   round((df1$fishing_days_vmsYes / (df1$fishing_days_vmsYes+df1$fishing_days_vmsNO))  *100, 0)         #round(((df1$fishing_days_vmsYes / df1$fishing_days_vmsNO) / df1$fishing_days_vmsYes * 100), 0) # need to finish this
 df1 <- df1 %>% relocate(perc_fish_days, .after = fishing_days_vmsNO)
 
+
+
 # calculate percentages of totweight with vms
-df1$perc_totweight <- round(((df1$totweight_vmsYes - df1$totweight_vmsNO) / df1$totweight_vmsYes * 100), 0)
-index_neg_totweight <- which(df1$perc_totweight < 0)
-df1$perc_totweight[index_neg_totweight] <- NaN
-df1$perc_totweight[index_neg_totweight] <- round(((df1$totweight_vmsYes[index_neg_totweight] / df1$totweight_vmsNO[index_neg_totweight]) * 100), 0)
+df1$perc_totweight <-   round((df1$totweight_vmsYes / (df1$totweight_vmsYes + df1$totweight_vmsNO))  *100, 0)
 
 # calculate percentages of totweight adjusted for stat-rec percentages
-df1$perc_totweight_adj <- round(((df1$totweight_adj_vmsYes - df1$totweight_adj_vmsNO) / df1$totweight_adj_vmsYes * 100), 0)
-index_neg_totweight_adj <- which(df1$perc_totweight_adj < 0)
-df1$perc_totweight_adj[index_neg_totweight_adj] <- NaN
-df1$perc_totweight_adj[index_neg_totweight_adj] <- round(((df1$totweight_adj_vmsYes[index_neg_totweight_adj] / df1$totweight_adj_vmsNO[index_neg_totweight_adj]) * 100), 0)
+df1$perc_totweight_adj <-   round((df1$totweight_adj_vmsYes / (df1$totweight_adj_vmsYes + df1$totweight_adj_vmsNO))  *100, 0)
+
+df1 <- df1 %>% select(-c(totweight_vmsYes,totweight_vmsNO,perc_totweight))
 
 # save table as csv
 write.table(df1, file = "table_report_adj.csv", row.names = FALSE, col.names = TRUE, sep = ",")
