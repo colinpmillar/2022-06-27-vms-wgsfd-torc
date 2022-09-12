@@ -128,3 +128,38 @@ df1 <- df1 %>% select(-c(totweight_vmsYes,totweight_vmsNO,perc_totweight))
 # save table as csv
 write.table(df1, file = "table_report_adj.csv", row.names = FALSE, col.names = TRUE, sep = ",")
 
+
+
+################################# End of script for Neil C. ToR C report
+
+
+################################# Start script for Niels Hintzen data request
+
+
+conn <- odbcDriverConnect(connection = config$db_connection)
+
+NS <- get_csquare(ecoregion = "Greater North Sea", convert2sf = TRUE)
+sql_in<-paste0(unique(NS$c_square), collapse="','")
+sqlq<- paste("select 
+                    [recordtype]
+                    ,[year]
+                    ,[month]
+                    ,[c_square]
+                    ,[gear_code]
+                    ,[LE_MET_level5]
+                    ,[LE_MET_level6]
+                    ,[fishing_hours]
+                    ,[kw_fishinghours]
+                    ,[totweight]
+                    ,[totvalue] 
+                                FROM [VMS].[dbo].[_ICES_VMS_Datacall_VMS] WHERE c_square in ",paste("('",sql_in,"')",sep=''))
+
+out <- sqlQuery(conn, sqlq)
+# checks
+names(out)
+sort(unique(out$year))
+
+#save df as csv
+write.table(out, file = "vms_data.csv", row.names = FALSE, col.names = TRUE, sep = ",")
+
+################################# End of script for Niels Hintzen data request
