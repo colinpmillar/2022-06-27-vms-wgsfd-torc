@@ -159,7 +159,29 @@ out <- sqlQuery(conn, sqlq)
 names(out)
 sort(unique(out$year))
 
-#save df as csv
-write.table(out, file = "vms_data.csv", row.names = FALSE, col.names = TRUE, sep = ",")
+# check metier lookup table for benthis
+metiers <- get_metier_lookup()
+names(metiers)
+tibble(metiers)
 
+# checks
+unique(metiers$leMetLevel6)
+metiers %>% count(metiers$benthisMetiers)
+
+# subset the metiers df to have just metiers level6 and benthisMetiers columns
+df_benthis <- metiers %>% 
+        select(leMetLevel6, benthisMetiers)
+
+# join the two df by Le MET 6
+joined_df_benthis <- left_join(out, df_benthis, 
+              by = c("LE_MET_level6" = "leMetLevel6"))
+
+# checks
+names(joined_df_benthis)
+head(joined_df_benthis, 20)
+joined_df_benthis %>% count(benthisMetiers)
+
+
+#save df as csv
+write.table(joined_df_benthis, file = "vms_data.csv", row.names = FALSE, col.names = TRUE, sep = ",")
 ################################# End of script for Niels Hintzen data request
